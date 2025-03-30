@@ -2,6 +2,7 @@ package com.leaderboard.service;
 
 import com.leaderboard.model.Leaderboard;
 import com.leaderboard.repository.LeaderboardRepository;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,10 @@ public class LeaderboardService {
     @Autowired
     public LeaderboardService(LeaderboardRepository leaderboardRepository) {
         this.leaderboardRepository = leaderboardRepository;
+    }
+
+    @PostConstruct
+    public void init() {
         refreshLeaderboardDaily();
     }
 
@@ -45,9 +50,8 @@ public class LeaderboardService {
             player.setTotalWins(player.getTotalWins() + 1);
         }
 
-        Leaderboard updatedPlayer = leaderboardRepository.save(player);
+        leaderboardRepository.save(player);
         log.info("Successfully updated leaderboard for user {} ", username);
-        leaderboardRepository.save(updatedPlayer);
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
